@@ -1,12 +1,18 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+// Берём любую переменную, которая похожа на URL базы данных
+const dbUrl = process.env.DATABASE_URL || 
+              process.env.DATABASE_URL || 
+              process.env.DATABASE_URL || 
+              process.env.DATABASE_URL;  // ищем в разных регистрах
+
 let pool;
 
-if (process.env.RENDER === 'true') {
-  // Для Render — берём DATABASE_URL из переменных окружения
+if (dbUrl) {
+  // Работаем на Render с любой переменной
   pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: dbUrl,
     ssl: {
       rejectUnauthorized: false
     }
@@ -14,11 +20,11 @@ if (process.env.RENDER === 'true') {
 } else {
   // Локальная разработка
   pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'bank_jdc',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres'
   });
 }
 
