@@ -64,5 +64,24 @@ async function startServer() {
     process.exit(1);
   }
 }
+// Добавьте после подключения db, перед startServer()
+const initializeDatabase = require('./config/init');
+
+async function startServer() {
+  try {
+    await db.query('SELECT NOW()');
+    console.log('✅ PostgreSQL connected');
+    
+    // Инициализация таблиц
+    await initializeDatabase();
+    
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
 startServer();
